@@ -66,9 +66,9 @@ jobs:
 
       - name: Notify Packagist
         if: env.HAS_CHANGES == 'true'
-        uses: php-pkg/packagist-github-action@v1
-        with:
-          package-name: ${{ env.PACKAGE_NAME }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          packagist-username: eri-bga
-          packagist-token: ${{ secrets.PACKAGIST_API_TOKEN }}
+        run: |
+          curl -X POST https://packagist.org/api/github  \
+            -H "Content-Type: application/json" \
+            -d '{"repository":{"url":"https://github.com/eri-bga/php-eight-four-string-utils.git "}}'
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
