@@ -1,0 +1,24 @@
+{
+    "name": "php-eight-four/string-utils",
+    "description": "String utilities for PHP 8.4",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "string",
+        "utilities"
+    ],
+    "autoload": {
+        "psr-4": {
+            "PhpEightFour\\StringUtils\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "eri-bga",
+            "email": "godseeshears@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
