@@ -56,4 +56,11 @@ class StringUtils
 
         return mb_substr($input, 0, $length - mb_strlen($suffix)) . $suffix;
     }
+
+    #[Description("Checks if a string is a valid email address.")]
+    #[Since("v1.2.0")]
+    public static function isValidEmail(string $email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
 }
