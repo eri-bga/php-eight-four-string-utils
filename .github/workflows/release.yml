@@ -28,24 +28,24 @@ jobs:
       - name: Install standard-version
         run: npm install --save-dev standard-version
 
-      - name: Determine next version
+            - name: Determine next version
         id: version
         run: |
+          # Run dry-run to check for changes
           npx standard-version --dry-run > /tmp/version-output.txt
-          NEXT_VERSION=$(grep "new version" /tmp/version-output.txt | awk '{print $4}')
-          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
-          echo "HAS_CHANGES=${NEXT_VERSION:+true}"
 
-      - name: Skip if no changes
-        if: env.HAS_CHANGES != 'true'
-        run: echo "No changes detected. Skipping release."
+          # Extract version safely
+          NEXT_VERSION=$(grep -oE 'new version for package .* is [0-9]+\.[0-9]+\.[0-9]+' /tmp/version-output.txt | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
 
-      - name: Create version tag and release
-        if: env.HAS_CHANGES == 'true'
-        run: |
-          npx standard-version
-          git push origin $(node -p "require('./package.json').version")
-          git push
+          if [ -z "$NEXT_VERSION" ]; then
+            echo "No conventional commits found. Skipping release."
+            echo "HAS_CHANGES=false" >> $GITHUB_ENV
+            exit 0
+          else
+            echo "New version detected: $NEXT_VERSION"
+            echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+          fi
 
       - name: Extract tag name
         if: env.HAS_CHANGES == 'true'
