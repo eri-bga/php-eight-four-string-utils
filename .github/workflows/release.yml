@@ -28,7 +28,7 @@ jobs:
       - name: Install standard-version
         run: npm install --save-dev standard-version
 
-            - name: Determine next version
+      - name: Determine next version
         id: version
         run: |
           # Run dry-run to check for changes
