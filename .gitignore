@@ -1,0 +1,38 @@
+# Composer dependencies
+/vendor/
+
+# PHP dotenv
+.env
+.env.local
+.env.development
+.env.test
+
+# Logs
+*.log
+/logs/
+/var/log/
+
+# Caches
+/cache/
+/tmp/
+composer.phar
+
+# PHPUnit / testing
+.phpunit.result.cache
+/tests/_output/
+/tests/_support/_generated/
+
+# GitHub Actions cache
+/.github/workflows/node_modules/
+
+# IDEs and editors
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
+
+# Build scripts
+/bin/build
+.DS_Store
+Thumbs.db

@@ -1,0 +1,74 @@
+name: Release & Notify Packagist
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Create Release & Update Packagist
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PACKAGIST_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
+      PACKAGE_NAME: php-eight-four/string-utils
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Install standard-version
+        run: npm install --save-dev standard-version
+
+      - name: Determine next version
+        id: version
+        run: |
+          npx standard-version --dry-run > /tmp/version-output.txt
+          NEXT_VERSION=$(grep "new version" /tmp/version-output.txt | awk '{print $4}')
+          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+          echo "HAS_CHANGES=${NEXT_VERSION:+true}"
+
+      - name: Skip if no changes
+        if: env.HAS_CHANGES != 'true'
+        run: echo "No changes detected. Skipping release."
+
+      - name: Create version tag and release
+        if: env.HAS_CHANGES == 'true'
+        run: |
+          npx standard-version
+          git push origin $(node -p "require('./package.json').version")
+          git push
+
+      - name: Extract tag name
+        if: env.HAS_CHANGES == 'true'
+        id: vars
+        run: |
+          TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "tag=$TAG" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        if: env.HAS_CHANGES == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.tag }}
+          body: |
+            ${{ steps.version.outputs.changelog }}
+          draft: false
+          prerelease: false
+
+      - name: Notify Packagist
+        if: env.HAS_CHANGES == 'true'
+        uses: php-pkg/packagist-github-action@v1
+        with:
+          package-name: ${{ env.PACKAGE_NAME }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          packagist-username: eri-bga
+          packagist-token: ${{ secrets.PACKAGIST_API_TOKEN }}
