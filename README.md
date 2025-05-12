@@ -105,7 +105,6 @@ MIT License – see the [LICENSE](LICENSE) file for details.
 
 If you have any questions or suggestions, feel free to reach out at:
 
-- Email: godseeshears@gmail.com
 - GitHub: [https://github.com/eri-bga/php-eight-four-string-utils](https://github.com/eri-bga/php-eight-four-string-utils)
 
 ---
