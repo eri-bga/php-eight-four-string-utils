@@ -31,4 +31,13 @@ class StringUtils
         $cleaned = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $input));
         return $cleaned === strrev($cleaned);
     }
+
+    public static function truncate(string $input, int $length = 20, string $suffix = '...'): string
+    {
+        if (mb_strlen($input) <= $length) {
+            return $input;
+        }
+
+        return mb_substr($input, 0, $length - mb_strlen($suffix)) . $suffix;
+    }
 }
