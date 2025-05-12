@@ -31,10 +31,13 @@ jobs:
       - name: Determine next version
         id: version
         run: |
-          # Run dry-run to check for changes
-          npx standard-version --dry-run > /tmp/version-output.txt
+          # Ensure git history is fully fetched
+          git fetch --tags
 
-          # Extract version safely
+          # Run dry-run to check for changes
+          npx standard-version@latest --dry-run --skip.bump --skip.changelog --skip.commit --skip.tag > /tmp/version-output.txt
+
+          # Extract version
           NEXT_VERSION=$(grep -oE 'new version for package .* is [0-9]+\.[0-9]+\.[0-9]+' /tmp/version-output.txt | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
 
           if [ -z "$NEXT_VERSION" ]; then
